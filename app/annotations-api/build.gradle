@@ -1,8 +1,14 @@
 plugins {
     id 'kotlin'
-//    id 'maven-publish'
+    id 'maven-publish'
 }
-
+publishing {
+    publications {
+        release(MavenPublication) {
+            from components.java
+        }
+    }
+}
 //afterEvaluate {
 //    publishing {
 //        publications {
