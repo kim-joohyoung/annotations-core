@@ -20,7 +20,7 @@ dependencies {
 
 # Usage
 
-Activity
+## Activity
 ```kotlin
 @EActivity
 class MainActivity : AppCompatActivity() {
@@ -43,7 +43,7 @@ val bundle = MainActivityBuilder("aaa", null).bundle()
 
 ```
 
-Fragment
+## Fragment
 ```kotlin
 @EFragment
 class FirstFragment : Fragment() {
@@ -64,7 +64,7 @@ val fragment = FirstFragmentBuilder("aaa", null).build()
 val bundle = FirstFragmentBuilder("aaa", null).bundle()
 ```
 
-Fragment with Companion
+## Fragment with Companion
 ```kotlin
 @EFragment
 class FirstFragment : Fragment() {
@@ -78,7 +78,7 @@ class FirstFragment : Fragment() {
         injectArgs()
     }
 	...
-	**companion object** {
+    companion object {
 
     }
 }
