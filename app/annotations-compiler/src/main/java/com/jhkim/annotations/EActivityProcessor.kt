@@ -1,11 +1,12 @@
 package com.jhkim.annotations
 
 import com.google.devtools.ksp.processing.*
-import com.google.devtools.ksp.symbol.KSAnnotated
+import com.google.devtools.ksp.symbol.KSClassDeclaration
+import com.jhkim.annotations.base.BaseSymbolProcessor
 
 class EActivityProcessor : BaseSymbolProcessor(EActivity::class.java) {
-    override fun accept(resolver: Resolver, it: KSAnnotated) {
-        it.accept(EActivityVisitor(codeGenerator, logger), Unit)
+    override fun accept(classDeclaration: KSClassDeclaration) {
+        EActivityBuilder(codeGenerator,logger).makeBuilderFile(classDeclaration)
     }
 }
 

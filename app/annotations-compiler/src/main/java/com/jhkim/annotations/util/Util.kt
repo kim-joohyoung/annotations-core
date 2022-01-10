@@ -5,16 +5,6 @@ import com.google.devtools.ksp.symbol.KSAnnotation
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.KSPropertyDeclaration
 import com.google.devtools.ksp.symbol.KSValueArgument
-import java.io.OutputStream
-
-
-fun OutputStream.append(str: String) {
-    this.write(str.toByteArray())
-}
-
-fun OutputStream.appendLine(str: String) {
-    this.write("$str\n".toByteArray())
-}
 
 fun isTypeOf(classDeclaration: KSClassDeclaration, clz : String) : Boolean{
     if(classDeclaration.qualifiedName?.asString() == clz){

@@ -20,12 +20,14 @@ class MainActivity : AppCompatActivity() {
     @Extra
     var arg2 : String? = null
 
+    val intent1 = MainActivityBuilder("aaa", null).intent(this)
+
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        injectExtras()
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
