@@ -17,7 +17,7 @@ afterEvaluate {
                 //from components.release
 
                 // You can then customize attributes of the publication as shown below.
-                groupId = 'com.jhkim.annotations'
+                groupId = 'com.github.kim-joohyoung.annotations-core'
                 artifactId = 'annotations-compiler'
                 version = '1.0'
             }
@@ -26,7 +26,7 @@ afterEvaluate {
                 // Applies the component for the debug build variant.
 //                from components.debug
 
-                groupId = 'com.jhkim.annotations'
+                groupId = 'com.github.kim-joohyoung.annotations-core'
                 artifactId = 'annotations-compiler'
                 version = '1.0'
             }

@@ -50,9 +50,13 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:2.1.2'
     implementation 'androidx.navigation:navigation-fragment-ktx:2.3.5'
     implementation 'androidx.navigation:navigation-ui-ktx:2.3.5'
-    ksp project(path: ':app:annotations-compiler')
-    implementation project(path: ':app:annotations-api')
-    testImplementation 'junit:junit:4.+'
+
+//    ksp project(path: ':app:annotations-compiler')
+//    implementation project(path: ':app:annotations-api')
+//    ksp 'com.github.kim-joohyoung.annotations-core:annotations-compiler:1.0.1'
+    implementation 'com.github.kim-joohyoung.annotations-core:annotations-api:1.0.1'
+
+    testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
 }
