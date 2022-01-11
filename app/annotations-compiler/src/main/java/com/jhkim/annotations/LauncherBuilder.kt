@@ -50,7 +50,18 @@ class LauncherBuilder(private val codeGenerator: CodeGenerator, private val logg
                             .build()
                     )
                     .addFunction(
-                        FunSpec.builder("launcher")
+                        FunSpec.builder("register")
+                            .addParameter("fragment", ClassEx.Fragment)
+                            .beginControlFlow("launcher = fragment.registerForActivityResult(%LContract()){bundle->", className.simpleName)
+                            .beginControlFlow("bundle?.let {")
+                            .addStatements(results.toBundleStrings("val ", "it"))
+                            .addStatement("callback?.invoke(%L)", results.toArgsString())
+                            .endControlFlow()
+                            .endControlFlow()
+                            .build()
+                    )
+                    .addFunction(
+                        FunSpec.builder("launch")
                             .addParameters(args.toParameterSpec())
                             .addParameter("callback", LambdaTypeName.get(
                                 returnType = Unit::class.java.asTypeName(),

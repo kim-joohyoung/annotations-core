@@ -41,7 +41,7 @@ class MainActivity : AppCompatActivity() {
         setupActionBarWithNavController(navController, appBarConfiguration)
 
         binding.fab.setOnClickListener {
-            launcher.launcher("test", "tes2"){result ->
+            launcher.launch("test", "tes2"){result ->
                 Toast.makeText(this, "$result", Toast.LENGTH_SHORT).show()
             }
         }

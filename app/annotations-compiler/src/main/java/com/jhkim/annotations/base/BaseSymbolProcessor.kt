@@ -1,22 +1,13 @@
 package com.jhkim.annotations.base
 
-import com.google.devtools.ksp.processing.CodeGenerator
-import com.google.devtools.ksp.processing.KSPLogger
-import com.google.devtools.ksp.processing.Resolver
-import com.google.devtools.ksp.processing.SymbolProcessor
+import com.google.devtools.ksp.processing.*
 import com.google.devtools.ksp.symbol.KSAnnotated
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.KSVisitorVoid
 
-abstract class BaseSymbolProcessor(private val cls:Class<*>) : SymbolProcessor {
-    lateinit var codeGenerator: CodeGenerator
-    lateinit var logger: KSPLogger
-    private val processed = mutableListOf<KSAnnotated>()
-
-    fun init(codeGenerator: CodeGenerator, logger: KSPLogger) {
-        this.codeGenerator = codeGenerator
-        this.logger = logger
-    }
+abstract class BaseSymbolProcessor(environment: SymbolProcessorEnvironment, private val cls:Class<*>) : SymbolProcessor {
+    val codeGenerator = environment.codeGenerator
+    val logger = environment.logger
 
     override fun process(resolver: Resolver): List<KSAnnotated> {
         val symbols = resolver.getSymbolsWithAnnotation(cls.canonicalName!!)
