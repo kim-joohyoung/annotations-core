@@ -47,7 +47,8 @@ class EFragmentBuilder(private val codeGenerator: CodeGenerator, private val log
             .addFunction(
                 FunSpec.builder("injectArgs")
                     .receiver(className)
-                    .addStatements(*args.getInjectString("arguments?").toTypedArray())
+                    .addStatement("val bundle = arguments ?: return")
+                    .addStatements(args.toBundleStrings())
                     .build()
             )
             .addImport("androidx.core.os", "bundleOf")

@@ -20,7 +20,7 @@ dependencies {
 
 # Usage
 
-## Activity
+## EActivity
 ```kotlin
 @EActivity
 class MainActivity : AppCompatActivity() {
@@ -43,7 +43,7 @@ val bundle = MainActivityBuilder("aaa", null).bundle()
 
 ```
 
-## Fragment
+## EFragment
 ```kotlin
 @EFragment
 class FirstFragment : Fragment() {
@@ -86,4 +86,47 @@ class FirstFragment : Fragment() {
 
 ```kotlin
 val fragment = FirstFragment.newInstance("aaa", null)	
+```
+
+## Launcher
+
+```kotlin
+@Launcher
+class SecondActivity : AppCompatActivity() {
+
+    @Extra
+    var arg1 : String = ""
+    @Extra
+    var arg2 : String? = null
+
+    @ResultExtra
+    var result : String? = ""
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        ...
+        button_close.setOnClickListener {
+            result = "Successes"
+            SecondActivityLauncher.setResult(this, RESULT_OK)
+            finish()
+        }
+    }
+}
+
+```
+
+```kotlin
+class MainActivity : AppCompatActivity() {
+    private val launcher = SecondActivityLauncher()
+    ...
+    override fun onCreate(savedInstanceState: Bundle?) {
+        ...
+        launcher.register(this)
+        ...
+        binding.fab.setOnClickListener {
+            launcher.launcher("test", "tes2"){ result ->
+                Toast.makeText(this, "$result", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
 ```

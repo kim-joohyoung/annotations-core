@@ -1,18 +1,10 @@
-package com.jhkim.annotations
+package com.jhkim.annotations.util
 
 import com.google.devtools.ksp.getDeclaredProperties
 import com.google.devtools.ksp.symbol.KSAnnotation
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.KSPropertyDeclaration
 import com.google.devtools.ksp.symbol.KSValueArgument
-
-fun isTypeOf(classDeclaration: KSClassDeclaration, clz : String) : Boolean{
-    if(classDeclaration.qualifiedName?.asString() == clz){
-        return true
-    }
-    val parent = classDeclaration.superTypes.firstOrNull()?.resolve()?.declaration ?: return false
-    return isTypeOf(parent as KSClassDeclaration, clz)
-}
 
 fun KSClassDeclaration.getProperties(cls:Class<*>): List<KSPropertyDeclaration> {
     val name = cls.simpleName

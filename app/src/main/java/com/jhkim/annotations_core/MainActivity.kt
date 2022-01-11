@@ -9,8 +9,10 @@ import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.Toast
 import com.jhkim.annotations.EActivity
 import com.jhkim.annotations.Extra
+import com.jhkim.annotations.Launcher
 import com.jhkim.annotations_core.databinding.ActivityMainBinding
 
 @EActivity
@@ -20,26 +22,28 @@ class MainActivity : AppCompatActivity() {
     @Extra
     var arg2 : String? = null
 
-    val intent1 = MainActivityBuilder("aaa", null).intent(this)
-
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
 
+    private val launcher = SecondActivityLauncher()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        injectExtras()
+        MainActivityBuilder.inject(this)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         setSupportActionBar(binding.toolbar)
+        launcher.register(this)
 
         val navController = findNavController(R.id.nav_host_fragment_content_main)
         appBarConfiguration = AppBarConfiguration(navController.graph)
         setupActionBarWithNavController(navController, appBarConfiguration)
 
-        binding.fab.setOnClickListener { view ->
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show()
+        binding.fab.setOnClickListener {
+            launcher.launcher("test", "tes2"){result ->
+                Toast.makeText(this, "$result", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 
