@@ -1,5 +1,4 @@
 [![](https://jitpack.io/v/kim-joohyoung/annotations-core.svg)](https://jitpack.io/#kim-joohyoung/annotations-core)
-# annotations-core
 
 # Installation
 
@@ -31,19 +30,20 @@ class MainActivity : AppCompatActivity() {
 	...
 	override fun onCreate(savedInstanceState: Bundle?) {
 		...
-		injectExtra()
+		MainActivityBuilder.inject(this)
 	}
 }
 ```
 
 ```kotlin
 
-val intent = MainActivityBuilder("aaa", null).intent(this)
-val bundle = MainActivityBuilder("aaa", null).bundle()
+val intent = MainActivityBuilder.intent(this, "aaa", null)
+val bundle = MainActivityBuilder.bundle("aaa", null)
+MainActivityBuilder.startActivity(this, "aaa", null)
 
 ```
 
-## EFragment
+## Fragment
 ```kotlin
 @EFragment
 class FirstFragment : Fragment() {
@@ -54,14 +54,14 @@ class FirstFragment : Fragment() {
 	...
 	override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        injectArgs()
+        FirstFragmentBuilder.inject(this)
     }
 }
 ```
 
 ```kotlin
-val fragment = FirstFragmentBuilder("aaa", null).build()
-val bundle = FirstFragmentBuilder("aaa", null).bundle()
+val fragment = FirstFragmentBuilder.build("aaa", null)
+val bundle = FirstFragmentBuilder.bundle("aaa", null)
 ```
 
 ## Fragment with Companion
@@ -75,7 +75,7 @@ class FirstFragment : Fragment() {
 	...
 	override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        injectArgs()
+        FirstFragmentBuilder.inject(this)
     }
 	...
     companion object {
@@ -105,6 +105,8 @@ class SecondActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         ...
+	SecondActivityLauncher.inject(this)
+	...
         button_close.setOnClickListener {
             result = "Successes"
             SecondActivityLauncher.setResult(this, RESULT_OK)
