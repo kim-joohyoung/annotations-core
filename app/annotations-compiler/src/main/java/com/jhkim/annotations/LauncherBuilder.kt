@@ -97,6 +97,16 @@ class LauncherBuilder(private val codeGenerator: CodeGenerator, private val logg
                     """.trimIndent(), results.toBundleOf())
                                 .build()
                         )
+                        .addFunction(
+                            FunSpec.builder("inject")
+
+                                .addParameter("activity", className)
+                                .addStatement("val bundle = activity.intent?.extras ?: return")
+                                //.addInjectStatements(args, "activity.")
+                                .addStatements(args.toBundleStrings("activity."))
+                                .build()
+
+                        )
                         .build()
                     )
                     .build()

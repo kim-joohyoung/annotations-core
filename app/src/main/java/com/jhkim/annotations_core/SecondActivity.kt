@@ -16,7 +16,6 @@ import com.jhkim.annotations.ResultExtra
 import com.jhkim.annotations_core.databinding.ActivitySecondBinding
 
 @Launcher
-@EActivity
 class SecondActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySecondBinding
 
@@ -32,7 +31,7 @@ class SecondActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivitySecondBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        SecondActivityBuilder.inject(this)
+        SecondActivityLauncher.inject(this)
         binding.textView.text = arg1
         binding.textView2.text = arg2
         binding.close.setOnClickListener {
