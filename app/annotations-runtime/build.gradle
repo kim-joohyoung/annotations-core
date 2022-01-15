@@ -31,6 +31,15 @@ android {
         jvmTarget = '1.8'
     }
 }
+afterEvaluate {
+    publishing {
+        publications {
+            release(MavenPublication) {
+                from components.release
+            }
+        }
+    }
+}
 
 dependencies {
 
