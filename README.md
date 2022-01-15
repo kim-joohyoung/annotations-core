@@ -19,38 +19,78 @@ dependencies {
 
 # Usage
 
-## EActivity
+## @ActivityLauncher
 ```kotlin
-@EActivity
-class MainActivity : AppCompatActivity() {
+@ActivityLauncher
+@Result("result1", String::class)
+@Result("result2", String::class)
+class SecondActivity : AppCompatActivity() {
     @Extra
-    var arg1 : String = ""
+    lateinit var arg1 : String
     @Extra
-    var arg2 : String? = null
+    lateinit var arg2 : String
 	...
 	override fun onCreate(savedInstanceState: Bundle?) {
 		...
-		MainActivityBuilder.inject(this)
+		SecondActivityLauncher.inject(this)
+		...
+        binding.close.setOnClickListener {
+            SecondActivityLauncher.setResult(this, RESULT_OK, "Successes", "Successes")
+            finish()
+        }
 	}
 }
 ```
 
 ```kotlin
-
-val intent = MainActivityBuilder.intent(this, "aaa", null)
-val bundle = MainActivityBuilder.bundle("aaa", null)
-MainActivityBuilder.startActivity(this, "aaa", null)
-
+class MainActivity : AppCompatActivity() {
+    ...
+    private val launcher = SecondActivityLauncher()
+    ...
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        ...
+        binding.fab.setOnClickListener {
+            launcher.launch("test", "tes2"){result1, result2 ->
+                Toast.makeText(this, "$result1, $result2", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+}
 ```
 
-## Fragment
+## @ActivityBuilder
 ```kotlin
-@EFragment
+@ActivityBuilder
+class SecondActivity : AppCompatActivity() {
+    @Extra
+    lateinit var arg1 : String
+    @Extra
+    lateinit var arg2 : String
+	...
+	override fun onCreate(savedInstanceState: Bundle?) {
+		...
+		SecondActivityBuilder.inject(this)
+		...
+	}
+}
+```
+
+```kotlin
+val intent = SecondActivityBuilder.intent(this, "aaa", "bbb")
+val bundle = SecondActivityBuilder.bundle("aaa", "bbb")
+SecondActivityBuilder.startActivity(this, "aaa", "bbb")
+````
+
+
+## FragmentBuilder
+```kotlin
+@FragmentBuilder
 class FirstFragment : Fragment() {
     @Arg
-    var arg1 : String = ""
+    lateinit var arg1 : String
     @Arg
-    var arg2 : String? = null
+    lateinit var arg2 : String
 	...
 	override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,14 +100,17 @@ class FirstFragment : Fragment() {
 ```
 
 ```kotlin
-val fragment = FirstFragmentBuilder.build("aaa", null)
+val fragment = FirstFragmentBuilder.build("aaa", "bbb")
+val fragment = FirstFragmentBuilder.newInstance("aaa", "bbb")
 val bundle = FirstFragmentBuilder.bundle("aaa", null)
 ```
 
-## Fragment with Companion
+## FragmentBuilder with listener
 ```kotlin
-@EFragment
-class FirstFragment : Fragment() {
+@FragmentBuilder(listener = true)
+@Result("result1", String::class)
+@Result("result2", String::class)
+class SecondFragment : Fragment() {
     @Arg
     var arg1 : String = ""
     @Arg
@@ -75,17 +118,23 @@ class FirstFragment : Fragment() {
 	...
 	override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        FirstFragmentBuilder.inject(this)
+        SecondFragmentBuilder.inject(this)
     }
 	...
-    companion object {
-
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        ...
+        binding.buttonSecond.setOnClickListener {
+            SecondFragmentBuilder.setResult(parentFragmentManager, "SecondFragment","Result")
+            parentFragmentManager.popBackStack()
+        }
     }
 }
 ```
 
 ```kotlin
-val fragment = FirstFragment.newInstance("aaa", null)	
+    SecondFragmentBuilder.register(this){result1, result2 ->
+        Toast.makeText(context, "==>$result1, $result2", Toast.LENGTH_SHORT).show()
+    }
 ```
 
 ## Launcher

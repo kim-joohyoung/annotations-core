@@ -16,9 +16,7 @@ publishing {
         }
     }
 }
-ksp {
-    arg("kspOutputDir", "generated/ksp/kotlin")
-}
+
 tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
     kotlinOptions {
         freeCompilerArgs += "-opt-in=kotlin.RequiresOptIn"

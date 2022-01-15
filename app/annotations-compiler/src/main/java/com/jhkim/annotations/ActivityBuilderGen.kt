@@ -10,7 +10,7 @@ import com.squareup.kotlinpoet.ksp.KotlinPoetKspPreview
 import com.squareup.kotlinpoet.ksp.toClassName
 import com.squareup.kotlinpoet.ksp.writeTo
 
-class EActivityBuilder(private val codeGenerator: CodeGenerator, private val logger: KSPLogger) {
+class ActivityBuilderGen(private val codeGenerator: CodeGenerator, private val logger: KSPLogger) {
     @OptIn(KotlinPoetKspPreview::class)
     fun makeBuilderFile(classDeclaration: KSClassDeclaration)  {
         val args = classDeclaration.getProperties(Extra::class.java)
@@ -21,39 +21,26 @@ class EActivityBuilder(private val codeGenerator: CodeGenerator, private val log
         val file = FileSpec.builder(buildClassName.packageName, buildClassName.simpleName)
             .addType(
                 TypeSpec.objectBuilder(buildClassName)
-                .addFunction(
-                    FunSpec.builder("bundle")
-                        .returns(ClassEx.Bundle)
-                        .addParameters(args.toParameterSpec())
-                        .addStatement("return %L", args.toBundleOf())
-                        .build()
-                )
+                .addFunction(CodeBuild.bundle(args))
                 .addFunction(
                     FunSpec.builder("intent")
-                        .addParameter("context", ClassEx.Context)
+                        .addParameter("context", ClassNameEx.Context)
                         .addParameters(args.toParameterSpec())
-                        .returns(ClassEx.Intent)
+                        .returns(ClassNameEx.Intent)
                         .beginControlFlow("return Intent(context, %L::class.java).apply", className.simpleName)
-                        .addStatement("putExtras(%L)", args.toBundleOf())
+                        .addStatement("putExtras(%L)", args.bundleOf())
                         .endControlFlow()
                         .build()
                 )
                 .addFunction(
                     FunSpec.builder("startActivity")
-                        .addParameter("context", ClassEx.Context)
+                        .addParameter("context", ClassNameEx.Context)
                         .addParameters(args.toParameterSpec())
                         .addStatement("context.startActivity(intent(context, %L))", args.toArgsString())
                         .build()
                 )
                 .addFunction(
-                    FunSpec.builder("inject")
-
-                        .addParameter("activity", className)
-                        .addStatement("val bundle = activity.intent?.extras ?: return")
-                        //.addInjectStatements(args, "activity.")
-                        .addStatements(args.toBundleStrings("activity."))
-                        .build()
-
+                    CodeBuild.injectBuilder(className, args, InjectType.Activity)
                 )
                 .build()
             )

@@ -1,42 +1,28 @@
 package com.jhkim.annotations.util
 
-import com.google.devtools.ksp.symbol.KSClassDeclaration
-import com.google.devtools.ksp.symbol.KSPropertyDeclaration
+import com.google.devtools.ksp.*
+import com.google.devtools.ksp.symbol.*
+import com.jhkim.annotations.ResultData
 import com.squareup.kotlinpoet.*
-import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import com.squareup.kotlinpoet.ksp.KotlinPoetKspPreview
+import com.squareup.kotlinpoet.ksp.toClassName
 import com.squareup.kotlinpoet.ksp.toTypeName
 
-object ClassEx {
-    val Bundle = ClassName("android.os", "Bundle")
-    val BundleNullable = Bundle.copy(true)
-    val Context = ClassName("android.content", "Context")
-    val Intent = ClassName("android.content", "Intent")
-    val IntentNullable = Intent.copy(true)
+fun KSClassDeclaration.isTypeOf(clz : ClassName) =
+    getAllSuperTypes().firstOrNull { it.declaration.toClassNameEx() == clz } != null
 
-    val Fragment = ClassName("androidx.fragment.app", "Fragment")
-    val Activity = ClassName("android.app", "Activity")
-    val ComponentActivity = ClassName("androidx.activity", "ComponentActivity")
-
-    //val ActivityResult = ClassName("androidx.activity.result", "ActivityResultLauncher<Bundle?>")
-    val ActivityResult = ClassName("androidx.activity.result", "ActivityResultLauncher")
-        .parameterizedBy(BundleNullable)
-    val ActivityResultContract = ClassName("androidx.activity.result.contract", "ActivityResultContract")
-        .parameterizedBy(Bundle, BundleNullable)
-
-}
-
-fun isTypeOf(classDeclaration: KSClassDeclaration, clz : ClassName) : Boolean{
-    return isTypeOf(classDeclaration, clz.simpleName)
-}
-
-fun isTypeOf(classDeclaration: KSClassDeclaration, clz : String) : Boolean{
-    if(classDeclaration.qualifiedName?.asString() == clz){
-        return true
+fun KSDeclaration.toClassNameEx(): ClassName {
+    require(!isLocal()) {
+        "Local/anonymous classes are not supported!"
     }
-    val parent = classDeclaration.superTypes.firstOrNull()?.resolve()?.declaration ?: return false
-    return isTypeOf(parent as KSClassDeclaration, clz)
+    val pkgName = packageName.asString()
+    val typesString = checkNotNull(qualifiedName).asString().removePrefix("$pkgName.")
+
+    val simpleNames = typesString
+        .split(".")
+    return ClassName(pkgName, simpleNames)
 }
+
 
 fun FunSpec.Builder.addStatements(vararg format : String): FunSpec.Builder = addStatements(format.toList())
 fun FunSpec.Builder.addStatements(format : List<String>): FunSpec.Builder {
@@ -46,22 +32,24 @@ fun FunSpec.Builder.addStatements(format : List<String>): FunSpec.Builder {
     return this
 }
 
+
+@JvmName("toParameterSpecResultData")
+@KotlinPoetKspPreview
+fun List<ResultData>.toParameterSpec() = map { ParameterSpec.builder(it.name, it.type.toClassName()).build() }
+
+@KotlinPoetKspPreview
+fun ArrayList<KSType>.toParameterSpec() = mapIndexed { index, type ->  ParameterSpec.builder("param$index", type.toClassName()).build() }
+
 @KotlinPoetKspPreview
 fun List<KSPropertyDeclaration>.toParameterSpec() = map { ParameterSpec(it.simpleName.asString(), it.type.toTypeName()) }
 
-fun List<KSPropertyDeclaration>.toBundleStrings(varPrefix : String = "", target: String="bundle") = map { it.toBundleString(varPrefix, target)  }
-
-fun List<KSPropertyDeclaration>.toArgsString() = joinToString { it.simpleName.asString() }
-
-fun List<KSPropertyDeclaration>.toBundleOf() = "bundleOf(${joinToString { "\"${it.simpleName.asString()}\" to ${it.simpleName.asString()}" }})"
-
 @KotlinPoetKspPreview
-fun TypeSpec.Builder.primaryConstructor(args : List<KSPropertyDeclaration>) =
+fun TypeSpec.Builder.primaryConstructor(args : List<ResultData>) =
     this.primaryConstructor(
         FunSpec.constructorBuilder()
             .addParameters(args.map {
                 ParameterSpec(
-                    it.simpleName.asString(),
+                    it.name,
                     it.type.toTypeName()
                 )
             })
@@ -69,8 +57,33 @@ fun TypeSpec.Builder.primaryConstructor(args : List<KSPropertyDeclaration>) =
     )
     .addProperties(
         args.map {
-            PropertySpec.builder(it.simpleName.asString(), it.type.toTypeName())
-                .initializer(it.simpleName.asString())
+            PropertySpec.builder(it.name, it.type.toTypeName())
+                .initializer(it.name)
                 .build()
         }
     )
+
+
+fun KSClassDeclaration.getProperties(cls:Class<*>): List<ResultData> {
+    val name = cls.simpleName
+    return getDeclaredProperties().filter { property ->
+        property.annotations.find { it.shortName.getShortName() == name }!=null
+    }.map { ResultData(it) }.toList()
+}
+
+fun KSClassDeclaration.hasCompanion() =
+    declarations.firstOrNull { it.simpleName.asString()=="Companion"}!=null
+
+fun KSClassDeclaration.getAnnotation(cls:Class<*>): KSAnnotation? {
+    return annotations.firstOrNull { it.shortName.asString() == cls.simpleName }
+}
+
+
+fun KSClassDeclaration. getAnnotationArg(cls:Class<*>, argName: String): KSValueArgument? {
+    return this.getAnnotation(cls)?.arguments?.firstOrNull { it.name?.asString() == argName }
+}
+
+@Suppress("UNCHECKED_CAST")
+fun <T> KSClassDeclaration.getAnnotationArgValue(cls:Class<*>, argName: String): T? {
+    return getAnnotationArg(cls, argName)?.value as T
+}

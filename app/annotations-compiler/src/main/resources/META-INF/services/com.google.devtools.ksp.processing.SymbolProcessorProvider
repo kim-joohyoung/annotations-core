@@ -1,3 +1,1 @@
-com.jhkim.annotations.EActivityProcessorProvider
-com.jhkim.annotations.EFragmentProcessorProvider
-com.jhkim.annotations.LauncherProcessorProvider
+com.jhkim.annotations.CommonSymbolProcessorProvider

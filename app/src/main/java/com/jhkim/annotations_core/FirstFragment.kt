@@ -4,23 +4,23 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.commit
 import androidx.navigation.fragment.findNavController
 import com.jhkim.annotations.Arg
-import com.jhkim.annotations.EFragment
+import com.jhkim.annotations.FragmentBuilder
 import com.jhkim.annotations_core.databinding.FragmentFirstBinding
 
 /**
  * A simple [Fragment] subclass as the default destination in the navigation.
  */
-@EFragment
+@FragmentBuilder
 class FirstFragment : Fragment() {
-    @Arg
-    var arg1 : String = ""
-    @Arg
-    var arg2 : String? = null
-
     private var _binding: FragmentFirstBinding? = null
+
+    @Arg
+    lateinit var arg1 : String
 
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -28,7 +28,10 @@ class FirstFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        injectArgs()
+        SecondFragmentBuilder.register(this){result1, result2 ->
+            Toast.makeText(context, "==>$result1, $result2", Toast.LENGTH_SHORT).show()
+        }
+        FirstFragmentBuilder.inject(this)
     }
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -36,6 +39,7 @@ class FirstFragment : Fragment() {
     ): View {
 
         _binding = FragmentFirstBinding.inflate(inflater, container, false)
+        _binding!!.textviewFirst.text = arg1
         return binding.root
 
     }
@@ -44,7 +48,10 @@ class FirstFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.buttonFirst.setOnClickListener {
-            findNavController().navigate(R.id.action_FirstFragment_to_SecondFragment)
+            parentFragmentManager.commit {
+                addToBackStack(null)
+                replace(R.id.layout, SecondFragmentBuilder("arg1_data", "arg2_data").newInstance())
+            }
         }
     }
 
@@ -53,7 +60,4 @@ class FirstFragment : Fragment() {
         _binding = null
     }
 
-    companion object {
-
-    }
 }
