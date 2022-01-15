@@ -22,8 +22,6 @@ class CommonSymbolProcessor(environment: SymbolProcessorEnvironment) :
     private val logger = environment.logger
 
     override fun process(resolver: Resolver): List<KSAnnotated> {
-        //buildUtilFile(resolver)
-
         processInternal(resolver, ActivityBuilder::class.java){
             if(it.isTypeOf(ClassNameEx.Activity))
                 ActivityBuilderGen(codeGenerator, logger).makeBuilderFile(it)
@@ -43,43 +41,6 @@ class CommonSymbolProcessor(environment: SymbolProcessorEnvironment) :
                 logger.warn("@ActivityLauncher error in ${it.simpleName.asString()}", it)
         }
         return emptyList()
-    }
-
-    @OptIn(KotlinPoetKspPreview::class)
-    private fun buildUtilFile(resolver: Resolver) {
-        try {
-            resolver.getAllFiles().firstOrNull()?.let {
-                val data = """
-                    package ${it.packageName.asString()}
-                    
-                    import android.os.Bundle
-                    import androidx.fragment.app.Fragment
-                    import android.app.Activity
-                    
-                    fun Activity.containsKey(key: String) = intent.extras?.containsKey(key) ?: false 
-                    fun Fragment.containsKey(key: String) = arguments?.containsKey(key) ?: false
-                    
-                    inline fun <reified T> Activity.extra(key: String) = intent.extras?.get(key) as T 
-                    inline fun <reified T> Fragment.extra(key: String) = arguments?.get(key) as T
-                    inline fun <reified T> Bundle.extra(key: String) = get(key) as T
-                    
-                    inline fun <reified T> Activity.extraNotNull(key: String) = requireNotNull(intent.extras?.get(key) as T) { key } 
-                    inline fun <reified T> Fragment.extraNotNull(key: String) = requireNotNull(arguments?.get(key) as T) { key } 
-                    inline fun <reified T> Bundle.extraNotNull(key: String) = requireNotNull(get(key) as T){key}
-                    
-                """.trimIndent()
-                val out = codeGenerator.createNewFile(
-                    Dependencies(true, *resolver.getAllFiles().toList().toTypedArray()),
-                    it.packageName.asString(),
-                    "BundleUtil"
-                )
-                out.write(data.toByteArray())
-                out.close()
-            }
-        }
-        catch (ex:Exception){
-//            logger.error(ex.toString())
-        }
     }
 
     private fun processInternal(resolver: Resolver, cls:Class<*>, callback : (classDeclaration: KSClassDeclaration) -> Unit): List<KSAnnotated> {
