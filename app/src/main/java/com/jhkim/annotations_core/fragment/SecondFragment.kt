@@ -1,14 +1,11 @@
-package com.jhkim.annotations_core
+package com.jhkim.annotations_core.fragment
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
-import androidx.navigation.fragment.findNavController
+import androidx.fragment.app.Fragment
 import com.jhkim.annotations.Arg
 import com.jhkim.annotations.FragmentBuilder
 import com.jhkim.annotations.Result
@@ -49,7 +46,7 @@ class SecondFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.buttonSecond.setOnClickListener {
-            SecondFragmentBuilder.setResult(parentFragmentManager, "SecondFragment","Result")
+            SecondFragmentBuilder.setResult(parentFragmentManager, "SecondFragment", "Result")
             parentFragmentManager.popBackStack()
         }
     }

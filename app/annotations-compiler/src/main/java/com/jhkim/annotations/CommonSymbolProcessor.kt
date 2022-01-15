@@ -22,7 +22,7 @@ class CommonSymbolProcessor(environment: SymbolProcessorEnvironment) :
     private val logger = environment.logger
 
     override fun process(resolver: Resolver): List<KSAnnotated> {
-        buildUtilFile(resolver)
+        //buildUtilFile(resolver)
 
         processInternal(resolver, ActivityBuilder::class.java){
             if(it.isTypeOf(ClassNameEx.Activity))

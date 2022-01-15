@@ -1,18 +1,17 @@
-package com.jhkim.annotations_core
+package com.jhkim.annotations_core.activity
 
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
-import androidx.navigation.findNavController
-import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.navigateUp
-import androidx.navigation.ui.setupActionBarWithNavController
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.commit
-import com.jhkim.annotations.ActivityBuilder
-import com.jhkim.annotations.Extra
+import androidx.navigation.findNavController
+import androidx.navigation.ui.AppBarConfiguration
+import androidx.navigation.ui.navigateUp
+import com.jhkim.annotations_core.R
 import com.jhkim.annotations_core.databinding.ActivityMainBinding
+import com.jhkim.annotations_core.fragment.FirstFragmentBuilder
 
 class MainActivity : AppCompatActivity() {
     private lateinit var appBarConfiguration: AppBarConfiguration

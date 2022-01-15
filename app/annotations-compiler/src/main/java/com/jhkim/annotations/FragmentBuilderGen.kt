@@ -5,12 +5,11 @@ import com.google.devtools.ksp.processing.Dependencies
 import com.google.devtools.ksp.processing.KSPLogger
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.jhkim.annotations.CodeBuild.extractBundle
+import com.jhkim.annotations.util.*
 import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.ksp.KotlinPoetKspPreview
 import com.squareup.kotlinpoet.ksp.toClassName
-import com.squareup.kotlinpoet.ksp.toTypeName
 import com.squareup.kotlinpoet.ksp.writeTo
-import com.jhkim.annotations.util.*
 
 class FragmentBuilderGen(private val codeGenerator: CodeGenerator, private val logger: KSPLogger) {
 
@@ -51,6 +50,8 @@ class FragmentBuilderGen(private val codeGenerator: CodeGenerator, private val l
                     .build()
             )
             .addImport("androidx.core.os", "bundleOf")
+            .addImport("com.jhkim.annotations", "extra")
+
         if(classDeclaration.hasCompanion()) {
             file.addFunction(
                 FunSpec.builder("newInstance")

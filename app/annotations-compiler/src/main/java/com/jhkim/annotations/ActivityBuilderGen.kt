@@ -45,6 +45,7 @@ class ActivityBuilderGen(private val codeGenerator: CodeGenerator, private val l
                 .build()
             )
             .addImport("androidx.core.os","bundleOf")
+            .addImport("com.jhkim.annotations", "extra")
             .build()
         file.writeTo(codeGenerator, Dependencies(true, classDeclaration.containingFile!!))
     }

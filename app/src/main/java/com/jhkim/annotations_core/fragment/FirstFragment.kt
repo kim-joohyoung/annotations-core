@@ -1,4 +1,4 @@
-package com.jhkim.annotations_core
+package com.jhkim.annotations_core.fragment
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -7,9 +7,9 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
-import androidx.navigation.fragment.findNavController
 import com.jhkim.annotations.Arg
 import com.jhkim.annotations.FragmentBuilder
+import com.jhkim.annotations_core.R
 import com.jhkim.annotations_core.databinding.FragmentFirstBinding
 
 /**
@@ -28,7 +28,7 @@ class FirstFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        SecondFragmentBuilder.register(this){result1, result2 ->
+        SecondFragmentBuilder.register(this) { result1, result2 ->
             Toast.makeText(context, "==>$result1, $result2", Toast.LENGTH_SHORT).show()
         }
         FirstFragmentBuilder.inject(this)

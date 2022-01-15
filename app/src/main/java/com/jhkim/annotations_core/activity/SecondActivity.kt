@@ -1,9 +1,9 @@
-package com.jhkim.annotations_core
+package com.jhkim.annotations_core.activity
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import com.jhkim.annotations.Extra
 import com.jhkim.annotations.ActivityLauncher
+import com.jhkim.annotations.Extra
 import com.jhkim.annotations.Result
 import com.jhkim.annotations_core.databinding.ActivitySecondBinding
 

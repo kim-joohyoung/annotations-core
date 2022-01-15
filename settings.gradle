@@ -11,3 +11,4 @@ rootProject.name = "annotations-core"
 include ':app'
 include ':app:annotations-api'
 include ':app:annotations-compiler'
+include ':app:annotations-runtime'
