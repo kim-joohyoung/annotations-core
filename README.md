@@ -105,7 +105,7 @@ val fragment = FirstFragmentBuilder.newInstance("aaa", "bbb")
 val bundle = FirstFragmentBuilder.bundle("aaa", null)
 ```
 
-## FragmentBuilder with listener
+## @FragmentBuilder with listener
 ```kotlin
 @FragmentBuilder(listener = true)
 @Result("result1", String::class)
@@ -134,50 +134,5 @@ class SecondFragment : Fragment() {
 ```kotlin
     SecondFragmentBuilder.register(this){result1, result2 ->
         Toast.makeText(context, "==>$result1, $result2", Toast.LENGTH_SHORT).show()
-    }
-```
-
-## Launcher
-
-```kotlin
-@Launcher
-class SecondActivity : AppCompatActivity() {
-
-    @Extra
-    var arg1 : String = ""
-    @Extra
-    var arg2 : String? = null
-
-    @ResultExtra
-    var result : String? = ""
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        ...
-	SecondActivityLauncher.inject(this)
-	...
-        button_close.setOnClickListener {
-            result = "Successes"
-            SecondActivityLauncher.setResult(this, RESULT_OK)
-            finish()
-        }
-    }
-}
-
-```
-
-```kotlin
-class MainActivity : AppCompatActivity() {
-    private val launcher = SecondActivityLauncher()
-    ...
-    override fun onCreate(savedInstanceState: Bundle?) {
-        ...
-        launcher.register(this)
-        ...
-        binding.fab.setOnClickListener {
-            launcher.launcher("test", "tes2"){ result ->
-                Toast.makeText(this, "$result", Toast.LENGTH_SHORT).show()
-            }
-        }
     }
 ```
