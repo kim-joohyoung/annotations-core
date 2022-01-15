@@ -83,7 +83,7 @@ SecondActivityBuilder.startActivity(this, "aaa", "bbb")
 ````
 
 
-## FragmentBuilder
+## @FragmentBuilder
 ```kotlin
 @FragmentBuilder
 class FirstFragment : Fragment() {
