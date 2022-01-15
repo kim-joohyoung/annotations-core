@@ -49,6 +49,7 @@ class MainActivity : AppCompatActivity() {
     ...
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+	launcher.register(this)
         ...
         binding.fab.setOnClickListener {
             launcher.launch("test", "tes2"){result1, result2 ->
