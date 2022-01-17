@@ -9,10 +9,15 @@ import androidx.fragment.app.commit
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
+import com.jhkim.annotations.ActivityBuilder
+import com.jhkim.annotations.ActivityLauncher
+import com.jhkim.annotations.Extra
+import com.jhkim.annotations.FragmentBuilder
 import com.jhkim.annotations_core.R
 import com.jhkim.annotations_core.databinding.ActivityMainBinding
 import com.jhkim.annotations_core.fragment.FirstFragmentBuilder
 
+@ActivityBuilder
 class MainActivity : AppCompatActivity() {
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
@@ -29,7 +34,7 @@ class MainActivity : AppCompatActivity() {
         launcher.register(this)
 
     supportFragmentManager.commit {
-        replace(R.id.layout, FirstFragmentBuilder("Test First Fragment").newInstance())
+        replace(R.id.layout, FirstFragmentBuilder("Test First Fragment").build())
     }
         binding.fab.setOnClickListener {
             launcher.launch("test", "tes2"){result1, result2 ->
@@ -52,11 +57,5 @@ class MainActivity : AppCompatActivity() {
             R.id.action_settings -> true
             else -> super.onOptionsItemSelected(item)
         }
-    }
-
-    override fun onSupportNavigateUp(): Boolean {
-        val navController = findNavController(R.id.nav_host_fragment_content_main)
-        return navController.navigateUp(appBarConfiguration)
-                || super.onSupportNavigateUp()
     }
 }

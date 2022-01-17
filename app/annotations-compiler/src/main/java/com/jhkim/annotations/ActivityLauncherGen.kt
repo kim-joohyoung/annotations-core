@@ -1,10 +1,12 @@
 package com.jhkim.annotations
 
 import com.google.devtools.ksp.KspExperimental
+import com.google.devtools.ksp.getAnnotationsByType
 import com.google.devtools.ksp.processing.CodeGenerator
 import com.google.devtools.ksp.processing.Dependencies
 import com.google.devtools.ksp.processing.KSPLogger
 import com.google.devtools.ksp.symbol.KSClassDeclaration
+import com.jhkim.annotations.CodeBuild.addInjectFunction
 import com.jhkim.annotations.CodeBuild.extractBundle
 import com.jhkim.annotations.util.*
 import com.squareup.kotlinpoet.*
@@ -12,12 +14,12 @@ import com.squareup.kotlinpoet.ksp.KotlinPoetKspPreview
 import com.squareup.kotlinpoet.ksp.toClassName
 import com.squareup.kotlinpoet.ksp.writeTo
 
-@Suppress("UNCHECKED_CAST")
 class ActivityLauncherGen(private val codeGenerator: CodeGenerator, private val logger: KSPLogger) {
 
     @OptIn(KotlinPoetKspPreview::class, KspExperimental::class)
     fun makeBuilderFile(classDeclaration: KSClassDeclaration) {
-        val args = classDeclaration.getProperties(Extra::class.java)
+        val checkSuperClass = classDeclaration.getAnnotationsByType(ActivityLauncher::class).first().checkSuperClass
+        val args = classDeclaration.getAllProperties(Extra::class.java, checkSuperClass)
         val className = classDeclaration.toClassName()
         val buildClassName = ClassName(className.packageName, "${className.simpleName}Launcher")
         val returns = classDeclaration.getAnnotations().toList()
@@ -56,7 +58,7 @@ class ActivityLauncherGen(private val codeGenerator: CodeGenerator, private val 
                     .addFunction(
                         FunSpec.builder("register")
                             .addParameter("activity", ClassNameEx.ComponentActivity)
-                            .beginControlFlow("launcher = activity.registerForActivityResult(%LContract())", className.simpleName)
+                            .beginControlFlow("launcher = activity.registerForActivityResult(ActivityContract(%L::class.java))", className.simpleName)
                             .addStatement("parseBundle(it)")
                             .endControlFlow()
                             .build()
@@ -64,7 +66,7 @@ class ActivityLauncherGen(private val codeGenerator: CodeGenerator, private val 
                     .addFunction(
                         FunSpec.builder("register")
                             .addParameter("fragment", ClassNameEx.Fragment)
-                            .beginControlFlow("launcher = fragment.registerForActivityResult(%LContract())", className.simpleName)
+                            .beginControlFlow("launcher = fragment.registerForActivityResult(ActivityContract(%L::class.java))", className.simpleName)
                             .addStatement("parseBundle(it)")
                             .endControlFlow()
                             .build()
@@ -80,29 +82,6 @@ class ActivityLauncherGen(private val codeGenerator: CodeGenerator, private val 
                             .addStatement("launcher.launch(%L)", args.bundleOf())
                             .build()
                     )
-                    .addType(
-                        TypeSpec.classBuilder("${className.simpleName}Contract")
-                            .superclass(ClassNameEx.ActivityResultContract)
-                            .addFunction(
-                                FunSpec.builder("createIntent")
-                                    .addParameter("context", ClassNameEx.Context)
-                                    .addParameter("input", ClassNameEx.Bundle)
-                                    .addModifiers(KModifier.OVERRIDE)
-                                    .returns(ClassNameEx.Intent)
-                                    .addStatement("return Intent(context, %L::class.java).also { it.putExtras(input) }", className.simpleName)
-                                    .build()
-                            )
-                            .addFunction(
-                                FunSpec.builder("parseResult")
-                                    .addParameter("resultCode", Int::class.java)
-                                    .addParameter("intent", ClassNameEx.IntentNullable)
-                                    .addModifiers(KModifier.OVERRIDE)
-                                    .returns(ClassNameEx.BundleNullable)
-                                    .addStatement("return intent?.extras")
-                                    .build()
-                            )
-                            .build()
-                    )
                     .addType(TypeSpec.companionObjectBuilder()
                         .addFunction(
                             FunSpec.builder("setResult")
@@ -115,17 +94,15 @@ class ActivityLauncherGen(private val codeGenerator: CodeGenerator, private val 
                                 .addCode("})")
                                 .build()
                         )
-                        .addFunction(
-                            CodeBuild.injectBuilder(className, args, InjectType.Activity)
-
-                        )
+                        .addInjectFunction(className, args, InjectType.Activity)
                         .build()
                     )
                     .build()
             )
-
+            .addImport("android.content","Intent")
             .addImport("androidx.core.os","bundleOf")
-            .addImport("com.jhkim.annotations", "extra")
+            .addImport("com.jhkim.annotations", "fromBundle")
+            .addImport("com.jhkim.annotations", "ActivityContract")
             .build()
         file.writeTo(codeGenerator, Dependencies(true, classDeclaration.containingFile!!))
     }

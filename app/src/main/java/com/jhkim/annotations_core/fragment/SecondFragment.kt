@@ -17,7 +17,7 @@ import com.jhkim.annotations_core.databinding.FragmentSecondBinding
 @FragmentBuilder(listener = true)
 @Result("result1", String::class)
 @Result("result2", String::class)
-class SecondFragment : Fragment() {
+class SecondFragment : BaseFragment() {
     @Arg
     lateinit var arg1 : String
     @Arg
@@ -55,7 +55,5 @@ class SecondFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
-    companion object{
 
-    }
 }

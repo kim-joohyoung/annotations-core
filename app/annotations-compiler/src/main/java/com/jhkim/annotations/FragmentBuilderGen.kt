@@ -1,9 +1,13 @@
 package com.jhkim.annotations
 
+import com.google.devtools.ksp.KspExperimental
+import com.google.devtools.ksp.getAnnotationsByType
+import com.google.devtools.ksp.isAbstract
 import com.google.devtools.ksp.processing.CodeGenerator
 import com.google.devtools.ksp.processing.Dependencies
 import com.google.devtools.ksp.processing.KSPLogger
 import com.google.devtools.ksp.symbol.KSClassDeclaration
+import com.jhkim.annotations.CodeBuild.addInjectFunction
 import com.jhkim.annotations.CodeBuild.extractBundle
 import com.jhkim.annotations.util.*
 import com.squareup.kotlinpoet.*
@@ -13,12 +17,15 @@ import com.squareup.kotlinpoet.ksp.writeTo
 
 class FragmentBuilderGen(private val codeGenerator: CodeGenerator, private val logger: KSPLogger) {
 
-    @OptIn(KotlinPoetKspPreview::class)
+    @OptIn(KotlinPoetKspPreview::class, KspExperimental::class)
     fun makeBuilderFile(classDeclaration: KSClassDeclaration) {
-        val args = classDeclaration.getProperties(Arg::class.java)
+        val annotation = classDeclaration.getAnnotationsByType(FragmentBuilder::class).first()
+        val checkSuperClass = annotation.checkSuperClass
+        val isListener = annotation.listener
+
+        val args = classDeclaration.getAllProperties(Arg::class.java, checkSuperClass)
         val className = classDeclaration.toClassName()
         val buildClassName = ClassName(className.packageName, "${className.simpleName}Builder")
-        val isListener = classDeclaration.getAnnotationArgValue<Boolean>(FragmentBuilder::class.java, "listener") ?: false
         val returns = classDeclaration.getAnnotations()
 
         logger.info("process ${className.simpleName}")
@@ -26,45 +33,31 @@ class FragmentBuilderGen(private val codeGenerator: CodeGenerator, private val l
             .addType(
                 TypeSpec.classBuilder(buildClassName)
                     .primaryConstructor(args)
-                    .addFunction(CodeBuild.bundle(args, false))
-                    .addFunction(
-                        FunSpec.builder("build")
-                            .returns(className)
-                            .beginControlFlow(
-                                "return %L().apply",
-                                className.simpleName
-                            )
-                            .addStatement("arguments = bundle()")
-                            .endControlFlow()
-                            .build()
-                    )
-                    .addFunction(
-                        FunSpec.builder("newInstance")
-                            .addStatement(
-                                "return %LBuilder(%L).build()",
-                                className.simpleName,
-                                args.toArgsString())
-                            .build()
-                    )
+//                    .addFunction(CodeBuild.bundle(args, false))
+                    .addBuildFunc(classDeclaration, className, args)
                     .addType(companionObjectBuilder(className, args, isListener, returns).build())
                     .build()
             )
             .addImport("androidx.core.os", "bundleOf")
-            .addImport("com.jhkim.annotations", "extra")
+            .addImport("com.jhkim.annotations", "fromBundle")
 
-        if(classDeclaration.hasCompanion()) {
-            file.addFunction(
-                FunSpec.builder("newInstance")
-                    .receiver(className.nestedClass("Companion"))
-                    .addParameters(args.toParameterSpec())
-                    .addStatement(
-                        "return %LBuilder(%L).build()",
-                        className.simpleName,
-                        args.joinToString { it.name })
-                    .build()
-            )
-        }
         file.build().writeTo(codeGenerator, Dependencies(true, classDeclaration.containingFile!!))
+    }
+    private fun TypeSpec.Builder.addBuildFunc(classDeclaration: KSClassDeclaration, className: ClassName, args: List<ResultData>) : TypeSpec.Builder{
+        if(classDeclaration.isAbstract())
+            return this
+        addFunction(
+            FunSpec.builder("build")
+                .returns(className)
+                .beginControlFlow(
+                    "return %L().apply",
+                    className.simpleName
+                )
+                .addStatement("arguments = %L", args.bundleOf())
+                .endControlFlow()
+                .build()
+        )
+        return this
     }
 
     @KotlinPoetKspPreview
@@ -75,9 +68,7 @@ class FragmentBuilderGen(private val codeGenerator: CodeGenerator, private val l
     returns: List<ResultData>
 ) : TypeSpec.Builder{
         val companion = TypeSpec.companionObjectBuilder()
-            .addFunction(
-                CodeBuild.injectBuilder(className, args, InjectType.Fragment)
-            )
+            .addInjectFunction(className, args, InjectType.Fragment)
         if(isListener){
             companion.addProperty(
                 PropertySpec.builder("requestKey", String::class, KModifier.PRIVATE)

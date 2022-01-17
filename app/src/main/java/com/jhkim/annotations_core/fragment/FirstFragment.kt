@@ -50,7 +50,7 @@ class FirstFragment : Fragment() {
         binding.buttonFirst.setOnClickListener {
             parentFragmentManager.commit {
                 addToBackStack(null)
-                replace(R.id.layout, SecondFragmentBuilder("arg1_data", "arg2_data").newInstance())
+                replace(R.id.layout, SecondFragmentBuilder("arg1_data", "arg2_data").build())
             }
         }
     }
