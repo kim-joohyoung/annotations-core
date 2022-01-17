@@ -13,7 +13,7 @@ allprojects {
 ```gradle
 dependencies {
   ksp 'com.github.kim-joohyoung.annotations-core:annotations-compiler:<version>'
-  implementation 'com.github.kim-joohyoung.annotations-core:annotations-api:<version>'
+  implementation 'com.github.kim-joohyoung.annotations-core:annotations-runtime:<version>'
 }
 ```
 
