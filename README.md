@@ -100,7 +100,7 @@ class FirstFragment : Fragment() {
 ```
 
 ```kotlin
-val fragment = FirstFragmentBuilder("aaa", "bbb").build()
+val fragment = FirstFragmentBuilder.build("aaa", "bbb")
 ```
 
 ## @FragmentBuilder with listener
