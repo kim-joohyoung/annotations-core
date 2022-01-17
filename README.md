@@ -79,7 +79,6 @@ class SecondActivity : AppCompatActivity() {
 
 ```kotlin
 val intent = SecondActivityBuilder.intent(this, "aaa", "bbb")
-val bundle = SecondActivityBuilder.bundle("aaa", "bbb")
 SecondActivityBuilder.startActivity(this, "aaa", "bbb")
 ````
 
@@ -101,9 +100,7 @@ class FirstFragment : Fragment() {
 ```
 
 ```kotlin
-val fragment = FirstFragmentBuilder.build("aaa", "bbb")
-val fragment = FirstFragmentBuilder.newInstance("aaa", "bbb")
-val bundle = FirstFragmentBuilder.bundle("aaa", null)
+val fragment = FirstFragmentBuilder("aaa", "bbb").build()
 ```
 
 ## @FragmentBuilder with listener
