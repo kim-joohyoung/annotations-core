@@ -24,19 +24,19 @@ class CommonSymbolProcessor(environment: SymbolProcessorEnvironment) :
     override fun process(resolver: Resolver): List<KSAnnotated> {
         processInternal(resolver, ActivityBuilder::class.java){
             if(it.isTypeOf(ClassNameEx.Activity))
-                ActivityBuilderGen(codeGenerator, logger).makeBuilderFile(it)
+                ActivityBuilderGen(it, codeGenerator, logger).makeBuilderFile()
             else
                 logger.error("@ActivityBuilder error in ${it.simpleName.asString()}", it)
         }
         processInternal(resolver, FragmentBuilder::class.java){
             if(it.isTypeOf(ClassNameEx.Fragment))
-                FragmentBuilderGen(codeGenerator, logger).makeBuilderFile(it)
+                FragmentBuilderGen(it, codeGenerator, logger).makeBuilderFile()
             else
                 logger.error("@FragmentBuilder error in ${it.simpleName.asString()}", it)
         }
         processInternal(resolver, ActivityLauncher::class.java){
             if(it.isTypeOf(ClassNameEx.ComponentActivity))
-                ActivityLauncherGen(codeGenerator, logger).makeBuilderFile(it)
+                ActivityLauncherGen(it, codeGenerator, logger).makeBuilderFile()
             else
                 logger.warn("@ActivityLauncher error in ${it.simpleName.asString()}", it)
         }

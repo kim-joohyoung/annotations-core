@@ -1,5 +1,6 @@
 package com.jhkim.annotations_core.fragment
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -15,12 +16,14 @@ import com.jhkim.annotations_core.databinding.FragmentFirstBinding
 /**
  * A simple [Fragment] subclass as the default destination in the navigation.
  */
+
+@SuppressLint("SetTextI18n")
 @FragmentBuilder
 class FirstFragment : Fragment() {
     private var _binding: FragmentFirstBinding? = null
 
     @Arg
-    lateinit var arg1 : String
+    var page : Int=0
 
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -29,7 +32,7 @@ class FirstFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         SecondFragmentBuilder.register(this) { result1, result2 ->
-            Toast.makeText(context, "==>$result1, $result2", Toast.LENGTH_SHORT).show()
+            _binding!!.textviewFirst.text = "page : $page\nresult1=$result1\nresult2=$result2"
         }
         FirstFragmentBuilder.inject(this)
     }
@@ -39,7 +42,7 @@ class FirstFragment : Fragment() {
     ): View {
 
         _binding = FragmentFirstBinding.inflate(inflater, container, false)
-        _binding!!.textviewFirst.text = arg1
+        _binding!!.textviewFirst.text = "page : $page"
         return binding.root
 
     }
@@ -50,7 +53,7 @@ class FirstFragment : Fragment() {
         binding.buttonFirst.setOnClickListener {
             parentFragmentManager.commit {
                 addToBackStack(null)
-                replace(R.id.layout, SecondFragmentBuilder("arg1_data", "arg2_data").build())
+                replace(R.id.layout, SecondFragmentBuilder.build("arg1_data", "arg2_data"))
             }
         }
     }

@@ -17,7 +17,7 @@ object  CodeBuild{
 
     fun TypeSpec.Builder.addInjectFunction(className : ClassName, args: List<ResultData>, injectType : InjectType): TypeSpec.Builder {
         if(args.isNotEmpty())
-            this.addFunction(injectBuilder(className, args, injectType))
+            this.addFunction(injectBuilder(className, args.filter { it.isMutable }, injectType))
         return this
     }
 

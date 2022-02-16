@@ -9,10 +9,7 @@ import androidx.fragment.app.commit
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
-import com.jhkim.annotations.ActivityBuilder
-import com.jhkim.annotations.ActivityLauncher
-import com.jhkim.annotations.Extra
-import com.jhkim.annotations.FragmentBuilder
+import com.jhkim.annotations.*
 import com.jhkim.annotations_core.R
 import com.jhkim.annotations_core.databinding.ActivityMainBinding
 import com.jhkim.annotations_core.fragment.FirstFragmentBuilder
@@ -34,11 +31,11 @@ class MainActivity : AppCompatActivity() {
         launcher.register(this)
 
     supportFragmentManager.commit {
-        replace(R.id.layout, FirstFragmentBuilder("Test First Fragment").build())
+        replace(R.id.layout, FirstFragmentBuilder.build(10))
     }
         binding.fab.setOnClickListener {
-            launcher.launch("test", "tes2"){result1, result2 ->
-                Toast.makeText(this, "$result1, $result2", Toast.LENGTH_SHORT).show()
+            launcher.launch("arg1", "arg2"){result1, result2 ->
+                Toast.makeText(this, "result1=$result1\nresult2=$result2", Toast.LENGTH_SHORT).show()
             }
         }
     }

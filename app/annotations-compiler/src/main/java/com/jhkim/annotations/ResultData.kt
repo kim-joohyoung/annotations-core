@@ -6,9 +6,10 @@ import com.google.devtools.ksp.symbol.KSType
 import com.squareup.kotlinpoet.ParameterSpec
 import com.squareup.kotlinpoet.ksp.KotlinPoetKspPreview
 import com.squareup.kotlinpoet.ksp.toClassName
+import kotlin.reflect.KClass
 
-data class ResultData(val name : String, val type : KSType){
-    constructor(arg : KSPropertyDeclaration) : this(arg.simpleName.asString(), arg.type.resolve())
+data class ResultData(val name : String, val type : KSType, val isMutable : Boolean){
+    constructor(arg : KSPropertyDeclaration) : this(arg.simpleName.asString(), arg.type.resolve(), arg.isMutable)
 
     fun bundleOf() = "\"$name\" to $name"
 }
@@ -23,7 +24,7 @@ fun List<ResultData>.toParameterSpec() = map { ParameterSpec.builder(it.name, it
 
 
 
-fun KSAnnotated.getAnnotations() =  this.annotations.filter {
-        it.shortName.getShortName() == Result::class.simpleName
-    }.map { ResultData(it.arguments[0].value as String, it.arguments[1].value as KSType) }.toList()
+fun KSAnnotated.getAnnotations(cls : KClass<*>) =  this.annotations.filter {
+        it.shortName.getShortName() == cls.simpleName
+    }.map { ResultData(it.arguments[0].value as String, it.arguments[1].value as KSType, false) }.toList()
 

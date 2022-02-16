@@ -1,9 +1,11 @@
 package com.jhkim.annotations_core.activity
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.jhkim.annotations.ActivityLauncher
 import com.jhkim.annotations.Extra
+import com.jhkim.annotations.InjectVar
 import com.jhkim.annotations.Result
 import com.jhkim.annotations_core.databinding.ActivitySecondBinding
 
@@ -15,18 +17,20 @@ class SecondActivity : AppCompatActivity() {
 
     @Extra
     var arg1 : String = ""
-    @Extra
-    var arg2 : String? = null
 
+    @delegate:Extra
+    val arg2 : String by InjectVar()
+
+    @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivitySecondBinding.inflate(layoutInflater)
         setContentView(binding.root)
         SecondActivityLauncher.inject(this)
-        binding.textView.text = arg1
-        binding.textView2.text = arg2
+        binding.textView.text = "arg1 = $arg1"
+        binding.textView2.text = "arg2 = $arg2"
         binding.close.setOnClickListener {
-            SecondActivityLauncher.setResult(this, RESULT_OK, "Successes", "Successes")
+            SecondActivityLauncher.setResult(this, RESULT_OK, "result1", "result2")
             finish()
         }
     }

@@ -14,16 +14,15 @@ import com.squareup.kotlinpoet.ksp.KotlinPoetKspPreview
 import com.squareup.kotlinpoet.ksp.toClassName
 import com.squareup.kotlinpoet.ksp.writeTo
 
-class ActivityLauncherGen(private val codeGenerator: CodeGenerator, private val logger: KSPLogger) {
+@OptIn(KotlinPoetKspPreview::class, KspExperimental::class)
+class ActivityLauncherGen(private val classDeclaration: KSClassDeclaration, private val codeGenerator: CodeGenerator, private val logger: KSPLogger) {
+    private val checkSuperClass = classDeclaration.getAnnotationsByType(ActivityLauncher::class).first().checkSuperClass
+    private val args = classDeclaration.getAllProperties(Extra::class.java, checkSuperClass)
+    private val className = classDeclaration.toClassName()
+    private val buildClassName = ClassName(className.packageName, "${className.simpleName}Launcher")
+    private val returns = classDeclaration.getAnnotations(Result::class).toList()
 
-    @OptIn(KotlinPoetKspPreview::class, KspExperimental::class)
-    fun makeBuilderFile(classDeclaration: KSClassDeclaration) {
-        val checkSuperClass = classDeclaration.getAnnotationsByType(ActivityLauncher::class).first().checkSuperClass
-        val args = classDeclaration.getAllProperties(Extra::class.java, checkSuperClass)
-        val className = classDeclaration.toClassName()
-        val buildClassName = ClassName(className.packageName, "${className.simpleName}Launcher")
-        val returns = classDeclaration.getAnnotations().toList()
-
+    fun makeBuilderFile() {
         logger.info("process ${className.simpleName}")
         val file = FileSpec.builder(buildClassName.packageName, buildClassName.simpleName)
             .addType(
