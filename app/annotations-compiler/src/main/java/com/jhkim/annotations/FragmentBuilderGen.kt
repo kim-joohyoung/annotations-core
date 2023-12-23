@@ -11,11 +11,10 @@ import com.jhkim.annotations.CodeBuild.addInjectFunction
 import com.jhkim.annotations.CodeBuild.extractBundle
 import com.jhkim.annotations.util.*
 import com.squareup.kotlinpoet.*
-import com.squareup.kotlinpoet.ksp.KotlinPoetKspPreview
 import com.squareup.kotlinpoet.ksp.toClassName
 import com.squareup.kotlinpoet.ksp.writeTo
 
-@OptIn(KotlinPoetKspPreview::class, KspExperimental::class)
+@OptIn(KspExperimental::class)
 class FragmentBuilderGen(private val classDeclaration: KSClassDeclaration, private val codeGenerator: CodeGenerator, private val logger: KSPLogger) {
     private val annotation = classDeclaration.getAnnotationsByType(FragmentBuilder::class).first()
     private val checkSuperClass = annotation.checkSuperClass

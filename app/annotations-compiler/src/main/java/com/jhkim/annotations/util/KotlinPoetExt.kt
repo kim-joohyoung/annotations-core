@@ -6,7 +6,6 @@ import com.google.devtools.ksp.symbol.KSAnnotation
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.jhkim.annotations.ResultData
 import com.squareup.kotlinpoet.*
-import com.squareup.kotlinpoet.ksp.KotlinPoetKspPreview
 import com.squareup.kotlinpoet.ksp.toTypeName
 
 fun KSClassDeclaration.isTypeOf(clz : ClassName) =
@@ -35,7 +34,6 @@ fun FunSpec.Builder.addStatements(format : List<String>): FunSpec.Builder {
     return this
 }
 
-@KotlinPoetKspPreview
 fun TypeSpec.Builder.primaryConstructor(args : List<ResultData>) =
     this.primaryConstructor(
         FunSpec.constructorBuilder()

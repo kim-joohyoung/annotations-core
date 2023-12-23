@@ -10,11 +10,10 @@ import com.jhkim.annotations.CodeBuild.addInjectFunction
 import com.jhkim.annotations.CodeBuild.extractBundle
 import com.jhkim.annotations.util.*
 import com.squareup.kotlinpoet.*
-import com.squareup.kotlinpoet.ksp.KotlinPoetKspPreview
 import com.squareup.kotlinpoet.ksp.toClassName
 import com.squareup.kotlinpoet.ksp.writeTo
 
-@OptIn(KotlinPoetKspPreview::class, KspExperimental::class)
+@OptIn(KspExperimental::class)
 class ActivityLauncherGen(private val classDeclaration: KSClassDeclaration, private val codeGenerator: CodeGenerator, private val logger: KSPLogger) {
     private val checkSuperClass = classDeclaration.getAnnotationsByType(ActivityLauncher::class).first().checkSuperClass
     private val args = classDeclaration.getAllProperties(Extra::class.java, checkSuperClass)
