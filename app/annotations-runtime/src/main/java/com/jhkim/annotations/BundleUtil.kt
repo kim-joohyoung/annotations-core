@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 package com.jhkim.annotations
 
 import android.os.Bundle

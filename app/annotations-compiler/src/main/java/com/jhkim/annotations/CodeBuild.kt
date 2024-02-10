@@ -5,6 +5,8 @@ import com.jhkim.annotations.util.*
 import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.FunSpec
 import com.squareup.kotlinpoet.TypeSpec
+import com.squareup.kotlinpoet.ksp.toClassName
+import com.squareup.kotlinpoet.ksp.toTypeName
 
 enum class InjectType {
     Fragment,
@@ -30,7 +32,15 @@ object  CodeBuild{
         }
 //        builder.addStatements(args.checkBundle(injectType))
         builder.beginControlFlow("try")
-        builder.addStatements(args.extractBundle(injectType))
+//        builder.addStatements(args.extractBundle(injectType))
+        args.forEach {
+            val format =when(injectType) {
+                InjectType.Fragment -> "fragment.${it.name} = fragment.fromBundle<%T>(\"${it.name}\")"
+                InjectType.Activity -> "activity.${it.name} = activity.fromBundle<%T>(\"${it.name}\")"
+                InjectType.Variable -> "val ${it.name} = bundle.fromBundle<%T>(\"${it.name}\")"
+            }
+                builder.addStatement(format, it.type.toTypeName())
+        }
         builder.addStatement("return true")
         builder.nextControlFlow("catch(ex:Exception)")
         builder.endControlFlow()
@@ -45,14 +55,14 @@ object  CodeBuild{
             InjectType.Variable -> "if(bundle.containsKey(\"$name\")) return false"
         }
     }.toList()
-
-    fun List<ResultData>.extractBundle(bundleType : InjectType) = map {
-        val name = it.name
-        val type = it.type
-        when(bundleType){
-            InjectType.Fragment -> "fragment.$name = fragment.fromBundle<$type>(\"$name\")"
-            InjectType.Activity -> "activity.$name = activity.fromBundle<$type>(\"$name\")"
-            InjectType.Variable -> "val $name = bundle.fromBundle<$type>(\"$name\")"
-        }
-    }.toList()
+//
+//    fun List<ResultData>.extractBundle(bundleType : InjectType): List<String> = map {
+//        val name = it.name
+//        val type = it.type.declaration.qualifiedName!!.asString()
+//        when(bundleType){
+//            InjectType.Fragment -> "fragment.$name = fragment.fromBundle<${type}>(\"$name\")"
+//            InjectType.Activity -> "activity.$name = activity.fromBundle<${type}>(\"$name\")"
+//            InjectType.Variable -> "val $name = bundle.fromBundle<${type}>(\"$name\")"
+//        }
+//    }.toList()
 }

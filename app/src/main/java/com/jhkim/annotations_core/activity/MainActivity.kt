@@ -6,13 +6,12 @@ import android.view.MenuItem
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.commit
-import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.navigateUp
 import com.jhkim.annotations.*
 import com.jhkim.annotations_core.R
 import com.jhkim.annotations_core.databinding.ActivityMainBinding
 import com.jhkim.annotations_core.fragment.FirstFragmentBuilder
+import com.jhkim.annotations_core.model.EnumTest
 
 @ActivityBuilder
 class MainActivity : AppCompatActivity() {
@@ -34,7 +33,7 @@ class MainActivity : AppCompatActivity() {
         replace(R.id.layout, FirstFragmentBuilder.build(10))
     }
         binding.fab.setOnClickListener {
-            launcher.launch("arg1", "arg2"){result1, result2 ->
+            launcher.launch("arg1", "arg2", EnumTest.Test1){ result1, result2 ->
                 Toast.makeText(this, "result1=$result1\nresult2=$result2", Toast.LENGTH_SHORT).show()
             }
         }

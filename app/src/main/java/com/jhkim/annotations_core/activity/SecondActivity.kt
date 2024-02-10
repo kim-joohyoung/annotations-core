@@ -8,6 +8,7 @@ import com.jhkim.annotations.Extra
 import com.jhkim.annotations.InjectVar
 import com.jhkim.annotations.Result
 import com.jhkim.annotations_core.databinding.ActivitySecondBinding
+import com.jhkim.annotations_core.model.EnumTest
 
 @ActivityLauncher
 @Result("result1", String::class)
@@ -20,6 +21,8 @@ class SecondActivity : AppCompatActivity() {
 
     @delegate:Extra
     val arg2 : String by InjectVar()
+    @Extra
+    var arg3 : EnumTest = EnumTest.Test1
 
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
