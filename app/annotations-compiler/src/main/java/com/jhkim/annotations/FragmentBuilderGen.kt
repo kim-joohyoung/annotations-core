@@ -92,7 +92,7 @@ class FragmentBuilderGen(private val classDeclaration: KSClassDeclaration, priva
                     .beginControlFlow("fm.setFragmentResultListener(requestKey, lifecycleOwner)")
                     .addStatement(" _, bundle ->")
                     .beginControlFlow("try")
-                    .addStatements(returns.extractBundle(InjectType.Variable))
+                    .extractBundle(InjectType.Variable, returns)
                     .addStatement("callback(%L)", returns.toArgsString())
                     .nextControlFlow("catch(ex:Exception)")
                     .endControlFlow()

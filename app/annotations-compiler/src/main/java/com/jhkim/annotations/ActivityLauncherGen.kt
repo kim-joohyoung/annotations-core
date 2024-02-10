@@ -48,7 +48,7 @@ class ActivityLauncherGen(private val classDeclaration: KSClassDeclaration, priv
                             .addParameter("bundle", ClassNameEx.BundleNullable)
                             .beginControlFlow("bundle?.let {")
                             //.addStatements(returns.getBundleList("it"))
-                            .addStatements(returns.extractBundle(InjectType.Variable))
+                            .extractBundle(InjectType.Variable, returns)
                             .addStatement("callback?.invoke(%L)", returns.toArgsString())
                             .endControlFlow()
                             .build()
