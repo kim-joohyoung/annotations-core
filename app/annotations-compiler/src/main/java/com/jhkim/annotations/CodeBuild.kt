@@ -1,11 +1,8 @@
 package com.jhkim.annotations
 
-import com.google.devtools.ksp.symbol.KSPropertyDeclaration
-import com.jhkim.annotations.util.*
 import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.FunSpec
 import com.squareup.kotlinpoet.TypeSpec
-import com.squareup.kotlinpoet.ksp.toClassName
 import com.squareup.kotlinpoet.ksp.toTypeName
 
 enum class InjectType {
@@ -32,29 +29,32 @@ object  CodeBuild{
         }
 //        builder.addStatements(args.checkBundle(injectType))
         builder.beginControlFlow("try")
-//        builder.addStatements(args.extractBundle(injectType))
-        args.forEach {
-            val format =when(injectType) {
-                InjectType.Fragment -> "fragment.${it.name} = fragment.fromBundle<%T>(\"${it.name}\")"
-                InjectType.Activity -> "activity.${it.name} = activity.fromBundle<%T>(\"${it.name}\")"
-                InjectType.Variable -> "val ${it.name} = bundle.fromBundle<%T>(\"${it.name}\")"
-            }
-                builder.addStatement(format, it.type.toTypeName())
-        }
+        builder.extractBundle(injectType, args)
         builder.addStatement("return true")
         builder.nextControlFlow("catch(ex:Exception)")
         builder.endControlFlow()
         builder.addStatement("return false")
         return builder.build()
     }
-    private fun List<ResultData>.checkBundle(bundleType : InjectType) = map {
-        val name = it.name
-        when(bundleType){
-            InjectType.Fragment -> "if(fragment.containsKey(\"$name\")) return false"
-            InjectType.Activity -> "if(activity.containsKey(\"$name\")) return false"
-            InjectType.Variable -> "if(bundle.containsKey(\"$name\")) return false"
+//    private fun List<ResultData>.checkBundle(bundleType : InjectType) = map {
+//        val name = it.name
+//        when(bundleType){
+//            InjectType.Fragment -> "if(fragment.containsKey(\"$name\")) return false"
+//            InjectType.Activity -> "if(activity.containsKey(\"$name\")) return false"
+//            InjectType.Variable -> "if(bundle.containsKey(\"$name\")) return false"
+//        }
+//    }.toList()
+
+    fun FunSpec.Builder.extractBundle(bundleType : InjectType, items : List<ResultData>): FunSpec.Builder = apply{
+        items.forEach {
+            val name = it.name
+            when(bundleType){
+                InjectType.Fragment -> addStatement("fragment.$name = fragment.fromBundle<%T>(\"$name\")", it.type.toTypeName())
+                InjectType.Activity -> addStatement("activity.$name = activity.fromBundle<%T>(\"$name\")", it.type.toTypeName())
+                InjectType.Variable -> addStatement("val $name = bundle.fromBundle<%T>(\"$name\")", it.type.toTypeName())
+            }
         }
-    }.toList()
+    }
 //
 //    fun List<ResultData>.extractBundle(bundleType : InjectType): List<String> = map {
 //        val name = it.name
