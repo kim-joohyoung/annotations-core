@@ -32,7 +32,7 @@ class ActivityBuilderGen(private val classDeclaration: KSClassDeclaration, priva
                 .addFunction(
                     FunSpec.builder("intent")
                         .addParameter("context", ClassNameEx.Context)
-                        .addParameters(args.toParameterSpec())
+                        .addParameters(args.toParameterSpecNull())
                         .returns(ClassNameEx.Intent)
                         .beginControlFlow("return Intent(context, %L::class.java).apply", className.simpleName)
                         .addStatement("putExtras(%L)", args.bundleOf())
@@ -42,7 +42,7 @@ class ActivityBuilderGen(private val classDeclaration: KSClassDeclaration, priva
                 .addFunction(
                     FunSpec.builder("startActivity")
                         .addParameter("context", ClassNameEx.Context)
-                        .addParameters(args.toParameterSpec())
+                        .addParameters(args.toParameterSpecNull())
                         .addStatement("context.startActivity(intent(%L))", args.toArgsString("context"))
                         .build()
                 )
@@ -51,6 +51,7 @@ class ActivityBuilderGen(private val classDeclaration: KSClassDeclaration, priva
             )
             .addImport("androidx.core.os","bundleOf")
             .addImport("com.jhkim.annotations", "fromBundle")
+            .addImport("com.jhkim.annotations", "hasBundle")
             .build()
         file.writeTo(codeGenerator, Dependencies(true, classDeclaration.containingFile!!))
     }

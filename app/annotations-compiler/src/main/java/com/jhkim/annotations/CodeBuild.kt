@@ -49,8 +49,16 @@ object  CodeBuild{
         items.forEach {
             val name = it.name
             when(bundleType){
-                InjectType.Fragment -> addStatement("fragment.$name = fragment.fromBundle<%T>(\"$name\")", it.type.toTypeName())
-                InjectType.Activity -> addStatement("activity.$name = activity.fromBundle<%T>(\"$name\")", it.type.toTypeName())
+                InjectType.Fragment -> {
+                    beginControlFlow("if(fragment.hasBundle(\"$name\"))")
+                    addStatement("fragment.$name = fragment.fromBundle<%T>(\"$name\")", it.type.toTypeName())
+                    endControlFlow()
+                }
+                InjectType.Activity -> {
+                    beginControlFlow("if(activity.hasBundle(\"$name\"))")
+                    addStatement("activity.$name = activity.fromBundle<%T>(\"$name\")", it.type.toTypeName())
+                    endControlFlow()
+                }
                 InjectType.Variable -> addStatement("val $name = bundle.fromBundle<%T>(\"$name\")", it.type.toTypeName())
             }
         }

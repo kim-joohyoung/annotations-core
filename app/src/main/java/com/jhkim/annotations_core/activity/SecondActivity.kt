@@ -20,7 +20,7 @@ class SecondActivity : AppCompatActivity() {
     var arg1 : String = ""
 
     @delegate:Extra
-    val arg2 : String by InjectVar()
+    val arg2 : String by InjectVar("")
     @Extra
     var arg3 : EnumTest = EnumTest.Test1
 

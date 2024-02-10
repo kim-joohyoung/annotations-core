@@ -1,4 +1,4 @@
-@file:Suppress("DEPRECATION")
+@file:Suppress("DEPRECATION", "unused")
 
 package com.jhkim.annotations
 
@@ -14,5 +14,9 @@ inline fun <reified T> Fragment.fromBundle(key: String) = arguments?.get(key) as
 inline fun <reified T> Bundle.fromBundle(key: String) = get(key) as T
 
 inline fun <reified T> Activity.extraNotNull(key: String) = requireNotNull(intent.extras?.get(key) as T) { key }
-inline fun <reified T> Fragment.extraNotNull(key: String) = requireNotNull(arguments?.get(key) as T) { key } 
+inline fun <reified T> Fragment.extraNotNull(key: String) = requireNotNull(arguments?.get(key) as T) { key }
 inline fun <reified T> Bundle.extraNotNull(key: String) = requireNotNull(get(key) as T){key}
+
+fun Activity.hasBundle(key: String) = intent.extras?.containsKey(key) ?: false
+fun Fragment.hasBundle(key: String) = arguments?.containsKey(key) ?: false
+fun Bundle.hasBundle(key: String) = containsKey(key)

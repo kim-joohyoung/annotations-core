@@ -15,10 +15,13 @@ import com.jhkim.annotations_core.model.EnumTest
 
 @ActivityBuilder
 class MainActivity : AppCompatActivity() {
-    private lateinit var appBarConfiguration: AppBarConfiguration
+//    private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
 
     private val launcher = SecondActivityLauncher()
+
+    @Extra
+    var arg1 = EnumTest.Test1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

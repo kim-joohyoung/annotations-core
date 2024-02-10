@@ -40,7 +40,7 @@ class FragmentBuilderGen(private val classDeclaration: KSClassDeclaration, priva
             )
             .addImport("androidx.core.os", "bundleOf")
             .addImport("com.jhkim.annotations", "fromBundle")
-
+            .addImport("com.jhkim.annotations", "hasBundle")
         file.build().writeTo(codeGenerator, Dependencies(true, classDeclaration.containingFile!!))
     }
 
@@ -50,9 +50,11 @@ class FragmentBuilderGen(private val classDeclaration: KSClassDeclaration, priva
         addFunction(
             FunSpec.builder("build")
                 .returns(className)
-                .addParameters(args.toParameterSpec())
+                .addParameters(args.toParameterSpecNull())
                 .addStatement("val frag= %L()", className.simpleName)
-                .addStatement("frag.arguments = %L", args.bundleOf())
+                .addStatement("val pairs = mutableListOf<Pair<String,Any?>>(%L)", args.pairOf())
+                .addStatement("frag.arguments = bundleOf(*pairs.filter { it.second!=null }.toTypedArray())")
+//                .addStatement("frag.arguments = %L", args.bundleOf())
                 .addStatement("return frag")
                 .build()
         )

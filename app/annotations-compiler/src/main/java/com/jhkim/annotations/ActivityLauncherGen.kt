@@ -71,13 +71,15 @@ class ActivityLauncherGen(private val classDeclaration: KSClassDeclaration, priv
                     )
                     .addFunction(
                         FunSpec.builder("launch")
-                            .addParameters(args.toParameterSpec())
+                            .addParameters(args.toParameterSpecNull())
                             .addParameter("callback", LambdaTypeName.get(
                                 returnType = Unit::class.java.asTypeName(),
                                 parameters = returns.toParameterSpec()
                             ))
                             .addStatement("this.callback = callback")
-                            .addStatement("launcher.launch(%L)", args.bundleOf())
+                            .addStatement("val pairs = mutableListOf<Pair<String,Any?>>(%L)", args.pairOf())
+                            .addStatement("launcher.launch(bundleOf(*pairs.filter { it.second!=null }.toTypedArray()))")
+                            //.addStatement("launcher.launch(%L)", args.bundleOf())
                             .build()
                     )
                     .addType(TypeSpec.companionObjectBuilder()
@@ -100,6 +102,7 @@ class ActivityLauncherGen(private val classDeclaration: KSClassDeclaration, priv
             .addImport("android.content","Intent")
             .addImport("androidx.core.os","bundleOf")
             .addImport("com.jhkim.annotations", "fromBundle")
+            .addImport("com.jhkim.annotations", "hasBundle")
             .addImport("com.jhkim.annotations", "ActivityContract")
             .build()
         file.writeTo(codeGenerator, Dependencies(true, classDeclaration.containingFile!!))
