@@ -6,7 +6,7 @@ import androidx.fragment.app.Fragment
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
 
-@Suppress("UNCHECKED_CAST")
+@Suppress("UNCHECKED_CAST", "DEPRECATION")
 class InjectVar<T> : ReadOnlyProperty<Any, T> {
     override fun getValue(thisRef: Any, property: KProperty<*>): T {
         return when (thisRef) {
